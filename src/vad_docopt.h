@@ -20,6 +20,12 @@ typedef struct {
     char *output_vad;
     char *output_wav;
     char *umbral1;
+<<<<<<< HEAD
+    char *umbral2;
+    char *tvoice;
+    char *tsilence;
+=======
+>>>>>>> b936122c94bcbac406ae34705f4776fcdcb1b8f1
     /* special */
     const char *usage_pattern;
     const char *help_message;

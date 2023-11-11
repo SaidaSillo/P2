@@ -1,8 +1,14 @@
 #!/bin/bash
 
+<<<<<<< HEAD
+if [ $# != 1 ]; then 
+    echo "usage: $0 umbral1"
+    exit 1 
+=======
 if [ $# != 1 ]; then
     echo "usage: $0 umbral1"
     exit 1
+>>>>>>> b936122c94bcbac406ae34705f4776fcdcb1b8f1
 fi
 
 umbral1=${1:-6}
@@ -17,7 +23,11 @@ set -o pipefail
 # Write here the name and path of your program and database
 DIR_P2=$HOME/PAV/P2
 DB=$DIR_P2/db.v4
+<<<<<<< HEAD
+CMD="$DIR_P2/bin/vad -1 $umbral1" 
+=======
 CMD="$DIR_P2/bin/vad -1 $umbral1"
+>>>>>>> b936122c94bcbac406ae34705f4776fcdcb1b8f1
 
 for filewav in $DB/*/*wav; do
 #    echo
