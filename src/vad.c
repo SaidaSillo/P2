@@ -97,6 +97,8 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x) {
   Features f = compute_features(x, vad_data->frame_length);
   vad_data->last_feature = f.p; /* save feature, in case you want to show */
 
+  int contMV =0;
+  int contMS =0;
   switch (vad_data->state) {
     case ST_INIT:
       vad_data->umbral1 = f.p + vad_data->umbral1;
@@ -113,9 +115,24 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x) {
 
     case ST_VOICE:
       if (f.p < vad_data->umbral1){     /*Si estamos en el estado VOICE y la potencia NO supera el umbral 1, entonces el estado futuro es MAYBE SILENCE*/
+<<<<<<< HEAD
+=======
+=======
+      if (f.p > vad_data->umbral1)
+        vad_data->state = ST_MAYBVOICE;
+      break;
+
+    case ST_VOICE:
+      if (f.p < vad_data->umbral1)
+<<<<<<< HEAD
+        vad_data->state = ST_MAYBSILENCE;
+=======
+>>>>>>> b936122c94bcbac406ae34705f4776fcdcb1b8f1
+>>>>>>> 5842b0dbad0b31ae49c35ffadbd0cc21dd8b8d51
         vad_data->state = ST_SILENCE;
         vad_data->ms++;
       }
+>>>>>>> 57be384d03e88ffff70d8443c93c469fb1c72445
       break;
 
     case ST_MV:
@@ -152,6 +169,22 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x) {
     break;
 
     case ST_UNDEF:
+      break;
+
+    case ST_MAYBVOICE:
+      if(f.p > vad_data->umbral1)
+        vad_data->state = ST_VOICE;
+      else if (f.p < vad_data->umbral1)
+        vad_data->state = ST_SILENCE;
+      
+      break;
+
+    case ST_MAYBSILENCE:
+      if(f.p > vad_data->umbral1)
+        vad_data->state = ST_VOICE;
+      else if (f.p < vad_data->umbral1)
+        vad_data->state = ST_SILENCE;
+
       break;
   }
 
