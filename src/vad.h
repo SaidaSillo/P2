@@ -16,7 +16,11 @@ typedef struct {
   float sampling_rate;
   unsigned int frame_length;
   float last_feature; /* for debuggin purposes */
+<<<<<<< HEAD
   float umbral1, umbral2, tvoice, tsilence;
+=======
+  float umbral1;
+>>>>>>> b936122c94bcbac406ae34705f4776fcdcb1b8f1
 } VAD_DATA;
 
 /* Call this function before using VAD: 
