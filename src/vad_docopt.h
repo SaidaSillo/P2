@@ -20,6 +20,9 @@ typedef struct {
     char *output_vad;
     char *output_wav;
     char *umbral1;
+    char *umbral2;
+    char *tvoice;
+    char *tsilence;
     /* special */
     const char *usage_pattern;
     const char *help_message;
