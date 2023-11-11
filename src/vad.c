@@ -57,14 +57,11 @@ VAD_DATA * vad_open(float rate, float umbral1) {
   vad_data->sampling_rate = rate;
   vad_data->frame_length = rate * FRAME_TIME * 1e-3;
   vad_data->umbral1 = umbral1;
-<<<<<<< HEAD
   vad_data->umbral2=umbral2;
   vad_data->tvoice = tvoice;
   vad_data->tsilence = tsilence;
   vad_data->mv=0;
   vad_data->ms=0;
-=======
->>>>>>> b936122c94bcbac406ae34705f4776fcdcb1b8f1
   return vad_data;
 }
 
@@ -102,17 +99,12 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x) {
 
   switch (vad_data->state) {
     case ST_INIT:
-<<<<<<< HEAD
       vad_data->umbral1 = f.p + vad_data->umbral1;
       vad_data->umbral2 = f.p + vad_data->umbral2;
-=======
-      vad_data-> umbral1= f.p + vad_data->umbral1;
->>>>>>> b936122c94bcbac406ae34705f4776fcdcb1b8f1
       vad_data->state = ST_SILENCE;
       break;
 
     case ST_SILENCE:
-<<<<<<< HEAD
       if (f.p > vad_data->umbral2){     /*Si estamos en el estado SILENCE y la potencia supera el umbral2, entonces el estado futuro es MAYBE VOICE*/
         vad_data->state = ST_MV;      
         vad_data->mv++;
@@ -121,14 +113,6 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x) {
 
     case ST_VOICE:
       if (f.p < vad_data->umbral1){     /*Si estamos en el estado VOICE y la potencia NO supera el umbral 1, entonces el estado futuro es MAYBE SILENCE*/
-=======
-      if (f.p > vad_data->umbral1)
-        vad_data->state = ST_VOICE;
-      break;
-
-    case ST_VOICE:
-      if (f.p < vad_data->umbral1)
->>>>>>> b936122c94bcbac406ae34705f4776fcdcb1b8f1
         vad_data->state = ST_SILENCE;
         vad_data->ms++;
       }
@@ -151,7 +135,7 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x) {
       break;
 
     case ST_MS:
-      if(f.p < vad_data-->umbral2){
+      if(f.p < vad_data->umbral2){
         if(vad_data->ms*vad_data->frame_length/vad_data->sampling_rate > vad_data->tsilence){ /*duracion de la trama = frame_length/samplig_rate*/
           vad_data->state = ST_SILENCE; /*Si el tiempo en MAYBE SILENCE supera el tiempo minimo para considerar que hay silencio  */
           vad_data->ms=0;             /*El estado futuro sera SILENCE y reinciamos el tiempo en MAYBE SILENCE*/
