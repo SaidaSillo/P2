@@ -92,30 +92,29 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x) {
   Features f = compute_features(x, vad_data->frame_length);
   vad_data->last_feature = f.p; /* save feature, in case you want to show */
 
-  int contMV =0;
-  int contMS =0;
+
   switch (vad_data->state) {
     
     case ST_INIT:
-      vad_data-> umbral1= f.p + vad_data->umbral1;
+      vad_data->umbral1 = f.p + vad_data->umbral1;
+      vad_data->umbral2 = f.p + vad_data->umbral2;
       vad_data->state = ST_SILENCE;
       break;
 
     case ST_SILENCE:
-      if (f.p > vad_data->umbral1)
-        vad_data->state = ST_MV;
+      if (f.p > vad_data->umbral2){     /*Si estamos en el estado SILENCE y la potencia supera el umbral2, entonces el estado futuro es MAYBE VOICE*/
+        vad_data->state = ST_MV;      
+        vad_data->mv++;
+      }
       break;
 
-    case ST_VOICE:
-      if (f.p < vad_data->umbral1)
-
-        vad_data->state = ST_MS;
-
+   case ST_VOICE:
+      if (f.p < vad_data->umbral1){     /*Si estamos en el estado VOICE y la potencia NO supera el umbral 1, entonces el estado futuro es MAYBE SILENCE*/
         vad_data->state = ST_SILENCE;
         vad_data->ms++;
       }
-
       break;
+
 
     case ST_MV:
       if(f.p>vad_data->umbral1){      /*Si estamos en el estado MAYBE VOICE y la potencia supera el umbral 1*/
@@ -134,7 +133,7 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x) {
       break;
 
     case ST_MS:
-      if(f.p < vad_data-->umbral2){
+      if(f.p < vad_data->umbral2){
         if(vad_data->ms*vad_data->frame_length/vad_data->sampling_rate > vad_data->tsilence){ /*duracion de la trama = frame_length/samplig_rate*/
           vad_data->state = ST_SILENCE; /*Si el tiempo en MAYBE SILENCE supera el tiempo minimo para considerar que hay silencio  */
           vad_data->ms=0;             /*El estado futuro sera SILENCE y reinciamos el tiempo en MAYBE SILENCE*/
@@ -155,12 +154,15 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x) {
 
  
   }
-if (vad_data->state == ST_SILENCE || vad_data->state == ST_VOICE)
+
+  if (vad_data->state == ST_SILENCE || vad_data->state == ST_VOICE)
     return vad_data->state;
-else
+  else
     return ST_UNDEF;
+}
 
 
 void vad_show_state(const VAD_DATA *vad_data, FILE *out) {
   fprintf(out, "%d\t%f\n", vad_data->state, vad_data->last_feature);
 }
+

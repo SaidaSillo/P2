@@ -4,8 +4,16 @@ if [ $# != 1 ]; then
     echo "usage: $0 umbral1"
     exit 1
 fi
+#if [ $# -ne 6 ]; then
+ #   echo "Usage: $0 missing parameters"
+  #  exit -1
+#fi
+ #   umbral1=$1
+  #  umbral2=$2
+   # tvoice=$3
+    #tsilence=$4
 
-umbral1=${1:-6}
+# umbral1=${1:-6}
 
 # Be sure that this file has execution permissions:
 # Use the nautilus explorer or chmod +x run_vad.sh
