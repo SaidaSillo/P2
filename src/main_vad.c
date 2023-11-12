@@ -64,7 +64,7 @@ int main(int argc, char *argv[]) {
     }
   }
 
-  vad_data = vad_open(sf_info.samplerate, umbral1);
+  vad_data = vad_open(sf_info.samplerate, umbral1, umbral2, tvoice, tsilence);
   /* Allocate memory for buffers */
   frame_size   = vad_frame_size(vad_data);
   buffer       = (float *) malloc(frame_size * sizeof(float));

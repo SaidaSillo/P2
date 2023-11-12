@@ -51,7 +51,7 @@ Features compute_features(const float *x, int N) {
  * TODO: Init the values of vad_data
  */
 
-VAD_DATA * vad_open(float rate, float umbral1) {
+VAD_DATA * vad_open(float rate, float umbral1, float umbral2, float tvoice, float tsilence) {
   VAD_DATA *vad_data = malloc(sizeof(VAD_DATA));
   vad_data->state = ST_INIT;
   vad_data->sampling_rate = rate;
@@ -97,8 +97,6 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x) {
   Features f = compute_features(x, vad_data->frame_length);
   vad_data->last_feature = f.p; /* save feature, in case you want to show */
 
-  int contMV =0;
-  int contMS =0;
   switch (vad_data->state) {
     case ST_INIT:
       vad_data->umbral1 = f.p + vad_data->umbral1;
@@ -154,22 +152,6 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x) {
     break;
 
     case ST_UNDEF:
-      break;
-
-    case ST_MAYBVOICE:
-      if(f.p > vad_data->umbral1)
-        vad_data->state = ST_VOICE;
-      else if (f.p < vad_data->umbral1)
-        vad_data->state = ST_SILENCE;
-      
-      break;
-
-    case ST_MAYBSILENCE:
-      if(f.p > vad_data->umbral1)
-        vad_data->state = ST_VOICE;
-      else if (f.p < vad_data->umbral1)
-        vad_data->state = ST_SILENCE;
-
       break;
   }
 

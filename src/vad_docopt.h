@@ -305,9 +305,11 @@ int elems_to_args(Elements *elements, DocoptArgs *args, bool help,
  * Main docopt function
  */
 
+
 DocoptArgs docopt(int argc, char *argv[], bool help, const char *version) {
     DocoptArgs args = {
-        0, 0, 0, NULL, NULL, NULL, (char*) "-30",
+        0, 0, 0, (char*) "7.5", (char*) "3.5", NULL, NULL, NULL, (char*) "0.12",
+        (char*) "0",
         usage_pattern, help_message
     };
     Tokens ts;
@@ -319,12 +321,15 @@ DocoptArgs docopt(int argc, char *argv[], bool help, const char *version) {
         {"-h", "--help", 0, 0, NULL},
         {"-v", "--verbose", 0, 0, NULL},
         {NULL, "--version", 0, 0, NULL},
+        {"-1", "--umbral", 1, 0, NULL},
+        {"-2", "--umbral2", 1, 0, NULL},
         {"-i", "--input-wav", 1, 0, NULL},
         {"-o", "--output-vad", 1, 0, NULL},
         {"-w", "--output-wav", 1, 0, NULL},
-        {"-1", "--umbral1", 1, 0, NULL}
+        {"-S", "--tsilence", 1, 0, NULL},
+        {"-V", "--tvoice", 1, 0, NULL},
     };
-    Elements elements = {0, 0, 7, commands, arguments, options};
+    Elements elements = {0, 0, 12, commands, arguments, options};
 
     ts = tokens_new(argc, argv);
     if (parse_args(&ts, &elements))
