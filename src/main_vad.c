@@ -23,6 +23,7 @@ int main(int argc, char *argv[]) {
   int frame_size;         /* in samples */
   float frame_duration;   /* in seconds */
   unsigned int t, last_t; /* in frames */
+  float umbral1, umbral2, tvoice, tsilence;
 
   char	*input_wav, *output_vad, *output_wav;
 
@@ -32,7 +33,10 @@ int main(int argc, char *argv[]) {
   input_wav  = args.input_wav;
   output_vad = args.output_vad;
   output_wav = args.output_wav;
-  float umbral1 = atof(args.umbral1);
+  umbral1 = atof (args.umbral1);
+  umbral2 = atof (args.umbral2);
+  tvoice = atof (args.tvoice);
+  tsilence = atof (args.tsilence);
 
   if (input_wav == 0 || output_vad == 0) {
     fprintf(stderr, "%s\n", args.usage_pattern);
