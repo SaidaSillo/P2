@@ -1,12 +1,6 @@
-<<<<<<< HEAD
-#include <math.h>
-#include <stdlib.h>
-#include <string.h>
-=======
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
->>>>>>> 97b9f7e3ca6bf47695ad1fe01e17b41f44c5fab8
 #include "pav_analysis.h"
 #define signo(x) (x>0 ? 1 : x<0 ? -1:0)
 
