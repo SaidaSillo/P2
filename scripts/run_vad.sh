@@ -1,5 +1,6 @@
 #!/bin/bash
 
+<<<<<<< HEAD
 if [ $# != 1 ]; then 
     echo "usage: $0 umbral1"
     exit 1 
@@ -7,13 +8,20 @@ fi
 #if [ $# -ne 6 ]; then
  #   echo "Usage: $0 missing parameters"
   #  exit -1
+=======
+#if [ $# != 1 ]; then 
+#    echo "usage: $0 umbral1"
+#    exit 1 
+>>>>>>> 208812c91f1b00bbf7192ab12c6e564e6c86de14
 #fi
- #   umbral1=$1
-  #  umbral2=$2
-   # tvoice=$3
-    #tsilence=$4
-
-# umbral1=${1:-6}
+#if [ $# != 3]; then
+#    echo "Usage: $0 missing parameters"
+#    exit -1
+#fi
+    umbral1=$1
+    umbral2=$2
+    tvoice=$3
+    tsilence=$4
 
 # Be sure that this file has execution permissions:
 # Use the nautilus explorer or chmod +x run_vad.sh
@@ -25,7 +33,11 @@ set -o pipefail
 # Write here the name and path of your program and database
 DIR_P2=$HOME/PAV/P2
 DB=$DIR_P2/db.v4
+<<<<<<< HEAD
 CMD="$DIR_P2/bin/vad -1 $umbral1" 
+=======
+CMD="$DIR_P2/bin/vad --umbral1=$alfa1 --umbral2=$alfa2 --tvoice=$tvoice --tsilence=$tsilence " 
+>>>>>>> 208812c91f1b00bbf7192ab12c6e564e6c86de14
 
 for filewav in $DB/*/*wav; do
 #    echo
