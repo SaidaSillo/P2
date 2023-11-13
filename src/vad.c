@@ -1,7 +1,6 @@
 #include <math.h>
 #include <stdlib.h>
 #include <stdio.h>
-
 #include "vad.h"
 #include "pav_analysis.h"
 
@@ -92,10 +91,6 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x) {
   Features f = compute_features(x, vad_data->frame_length);
   vad_data->last_feature = f.p; /* save feature, in case you want to show */
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 97b9f7e3ca6bf47695ad1fe01e17b41f44c5fab8
   switch (vad_data->state) {
     
     case ST_INIT:
@@ -154,11 +149,6 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x) {
 
     case ST_UNDEF:
       break;
-<<<<<<< HEAD
-
- 
-=======
->>>>>>> 97b9f7e3ca6bf47695ad1fe01e17b41f44c5fab8
   }
 
   if (vad_data->state == ST_SILENCE || vad_data->state == ST_VOICE)
@@ -170,9 +160,4 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x) {
 
 void vad_show_state(const VAD_DATA *vad_data, FILE *out) {
   fprintf(out, "%d\t%f\n", vad_data->state, vad_data->last_feature);
-<<<<<<< HEAD
 }
-
-=======
-}
->>>>>>> 97b9f7e3ca6bf47695ad1fe01e17b41f44c5fab8
