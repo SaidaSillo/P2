@@ -14,7 +14,7 @@ float p1= -30;
  */
 
 const char *state_str[] = {
-  "UNDEF", "S", "V", "INIT"
+  "UNDEF", "S", "V", "INIT", "MV", "MS"
 };
 
 const char *state2str(VAD_STATE st) {
@@ -46,6 +46,7 @@ Features compute_features(const float *x, int N) {
   feat.p = compute_power(x,N);
   return feat;
 }
+
 
 /* 
  * TODO: Init the values of vad_data
@@ -93,7 +94,6 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x) {
   vad_data->last_feature = f.p; /* save feature, in case you want to show */
 
   switch (vad_data->state) {
-    
     case ST_INIT:
       vad_data->umbral1 = f.p + vad_data->umbral1;
       vad_data->umbral2 = f.p + vad_data->umbral2;
@@ -109,7 +109,7 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x) {
 
    case ST_VOICE:
       if (f.p < vad_data->umbral1){     /*Si estamos en el estado VOICE y la potencia NO supera el umbral 1, entonces el estado futuro es MAYBE SILENCE*/
-        vad_data->state = ST_SILENCE;
+        vad_data->state = ST_MS;
         vad_data->ms++;
       }
       break;
@@ -145,17 +145,20 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x) {
         vad_data->state=ST_VOICE;         /*El futuro estado sera VOICE*/
         vad_data->mv=0;                   /*Reiniciamos el tiempo en MAYBE VOICE a cero*/
       }
-
     break;
 
     case ST_UNDEF:
-      break;
+    break;
   }
-
-  if (vad_data->state == ST_SILENCE || vad_data->state == ST_VOICE)
+  
+  if (vad_data->state == ST_SILENCE || vad_data->state == ST_VOICE || vad_data->state == ST_MS || vad_data -> state==ST_MV){
+    /*printf("%s\n", state2str(vad_data->state));*/
     return vad_data->state;
-  else
+  }
+  else{
+    /*printf(" %d\n", vad_data->state);*/
     return ST_UNDEF;
+  }
 }
 
 

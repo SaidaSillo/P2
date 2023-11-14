@@ -5,7 +5,7 @@
 #    exit 1 
 #fi
 
-#Esto es provisional para provar los umbrales que son mejores
+
 if [ $# != 4]; then
     echo "Usage: $0 missing parameters"
     exit -1
