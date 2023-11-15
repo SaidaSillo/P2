@@ -14,10 +14,12 @@ fi
 #    exit 1 
 >>>>>>> 208812c91f1b00bbf7192ab12c6e564e6c86de14
 #fi
-#if [ $# != 3]; then
-#    echo "Usage: $0 missing parameters"
-#    exit -1
-#fi
+
+
+if [ $# != 4]; then
+    echo "Usage: $0 missing parameters"
+    exit -1
+fi
     umbral1=$1
     umbral2=$2
     tvoice=$3
