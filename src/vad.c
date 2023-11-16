@@ -104,6 +104,9 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x) {
       vad_data->k1 = vad_data->k0 + vad_data->alfa1;
       vad_data->k2 = vad_data->k1 + vad_data->alfa2;
       vad_data->state = ST_SILENCE;
+      printf("%f\n", vad_data->k1);
+      printf("%f\n", vad_data->k2);
+      printf("%f\n", vad_data->k0);
       break;
 
     case ST_SILENCE:
@@ -158,7 +161,7 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x) {
   }
   
   if (vad_data->state == ST_SILENCE || vad_data->state == ST_VOICE){
-    /*printf("%s\n", state2str(vad_data->state));*/
+    //printf("%s\n", state2str(vad_data->state));
     return vad_data->state;
   }
   else{
