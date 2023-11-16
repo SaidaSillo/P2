@@ -6,7 +6,8 @@
 #include "pav_analysis.h"
 
 const float FRAME_TIME = 10.0F; /* in ms. */
-float p1= -30;
+
+//float p1= -30;
 /* 
  * As the output state is only ST_VOICE, ST_SILENCE, or ST_UNDEF,
  * only this labels are needed. You need to add all labels, in case
@@ -44,6 +45,8 @@ Features compute_features(const float *x, int N) {
    */
   Features feat;
   feat.p = compute_power(x,N);
+  feat.zcr = compute_zcr (x, N, 16000);
+  feat.am = compute_am(x,N);
   return feat;
 }
 
@@ -52,12 +55,17 @@ Features compute_features(const float *x, int N) {
  * TODO: Init the values of vad_data
  */
 
-VAD_DATA * vad_open(float rate, float umbral1, float umbral2, float tvoice, float tsilence) {
+VAD_DATA * vad_open(float rate, float alfa1, float alfa2, float tvoice, float tsilence) {
   VAD_DATA *vad_data = malloc(sizeof(VAD_DATA));
   vad_data->state = ST_INIT;
   vad_data->sampling_rate = rate;
   vad_data->frame_length = rate * FRAME_TIME * 1e-3;
-  vad_data->umbral1 = umbral1;
+  vad_data->alfa1 = alfa1;
+  vad_data->alfa2 = alfa2;
+  vad_data->tvoice=tvoice;
+  vad_data->tsilence=tsilence;
+  vad_data->ms=0;
+  vad_data->mv=0;
   return vad_data;
 }
 
@@ -66,10 +74,8 @@ VAD_STATE vad_close(VAD_DATA *vad_data) {
    * TODO: decide what to do with the last undecided frames
    */
   VAD_STATE state = vad_data->state;
-  if(state == ST_MS) 
-    state = ST_VOICE;
-  if(state == ST_MV) 
-    state = ST_SILENCE;
+  if(state == ST_MS) state = ST_VOICE;
+  if(state == ST_MV) state = ST_SILENCE;
   free(vad_data);
   return state;
 }
@@ -91,24 +97,25 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x) {
    */
 
   Features f = compute_features(x, vad_data->frame_length);
-  vad_data->last_feature = f.p; /* save feature, in case you want to show */
-
+  vad_data->last_feature=f.p;
+  
   switch (vad_data->state) {
     case ST_INIT:
-      vad_data->umbral1 = f.p + vad_data->umbral1;
-      vad_data->umbral2 = f.p + vad_data->umbral2;
+      vad_data->k0 = f.p;
+      vad_data->k1 = vad_data->k0 + vad_data->alfa1;
+      vad_data->k2 = vad_data->k1 + vad_data->alfa2;
       vad_data->state = ST_SILENCE;
       break;
 
     case ST_SILENCE:
-      if (f.p > vad_data->umbral2){     /*Si estamos en el estado SILENCE y la potencia supera el umbral2, entonces el estado futuro es MAYBE VOICE*/
+      if (f.p > vad_data->k2){     /*Si estamos en el estado SILENCE y la potencia supera el umbral2, entonces el estado futuro es MAYBE VOICE*/
         vad_data->state = ST_MV;      
         vad_data->mv++;
       }
       break;
 
    case ST_VOICE:
-      if (f.p < vad_data->umbral1){     /*Si estamos en el estado VOICE y la potencia NO supera el umbral 1, entonces el estado futuro es MAYBE SILENCE*/
+      if (f.p < vad_data->k1){     /*Si estamos en el estado VOICE y la potencia NO supera el umbral 1, entonces el estado futuro es MAYBE SILENCE*/
         vad_data->state = ST_MS;
         vad_data->ms++;
       }
@@ -116,23 +123,23 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x) {
 
 
     case ST_MV:
-      if(f.p>vad_data->umbral1){      /*Si estamos en el estado MAYBE VOICE y la potencia supera el umbral 1*/
+      if(f.p>vad_data->k1){      /*Si estamos en el estado MAYBE VOICE y la potencia supera el umbral 1*/
         if(vad_data->mv*vad_data->frame_length/vad_data->sampling_rate > vad_data->tvoice){ /*duracion de la trama = frame_length/samplig_rate*/
           vad_data->state = ST_VOICE; /*Si el tiempo en MAYBE VOICE supera el tiempo minimo para considerar que hay voz  */
           vad_data->mv=0;             /*El estado futuro sera VOICE y reinciamos el tiempo en MAYBE VOICE*/
-        }
+        } 
         else{
           vad_data->mv++;           /*Si no lo supera, se queda en MAYBE VOICE*/
         }
       }
-      else if(f.p < vad_data->umbral2){   /*Si estamos en el estado MAYBE VOICE y la potencia no supera el umbral 2*/
+      else if(f.p < vad_data->k2){   /*Si estamos en el estado MAYBE VOICE y la potencia no supera el umbral 2*/
         vad_data->state=ST_SILENCE;     /*El futuro estado sera silencio*/
         vad_data->ms=0;                 /*Reiniciamos el tiempo en MAYBE SILENCE a cero*/
       }
       break;
 
     case ST_MS:
-      if(f.p < vad_data->umbral2){
+      if(f.p < vad_data->k2){
         if(vad_data->ms*vad_data->frame_length/vad_data->sampling_rate > vad_data->tsilence){ /*duracion de la trama = frame_length/samplig_rate*/
           vad_data->state = ST_SILENCE; /*Si el tiempo en MAYBE SILENCE supera el tiempo minimo para considerar que hay silencio  */
           vad_data->ms=0;             /*El estado futuro sera SILENCE y reinciamos el tiempo en MAYBE SILENCE*/
@@ -141,7 +148,7 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x) {
           vad_data->ms++;     /*Si no lo supera, se queda en MAYBE SILENCE*/
         }
       }
-      else if (f.p > vad_data->umbral1){   /*Si estamos en el estado MAYBE SILENCE y la potencia supera el umbral 1*/
+      else if (f.p > vad_data->k1){   /*Si estamos en el estado MAYBE SILENCE y la potencia supera el umbral 1*/
         vad_data->state=ST_VOICE;         /*El futuro estado sera VOICE*/
         vad_data->mv=0;                   /*Reiniciamos el tiempo en MAYBE VOICE a cero*/
       }
@@ -151,7 +158,7 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x) {
     break;
   }
   
-  if (vad_data->state == ST_SILENCE || vad_data->state == ST_VOICE || vad_data->state == ST_MS || vad_data -> state==ST_MV){
+  if (vad_data->state == ST_SILENCE || vad_data->state == ST_VOICE){
     /*printf("%s\n", state2str(vad_data->state));*/
     return vad_data->state;
   }
