@@ -1,19 +1,9 @@
 #!/bin/bash
 
-#if [ $# != 1 ]; then 
-#    echo "usage: $0 umbral1"
-#    exit 1 
-#fi
-
-
-if [ $# != 4]; then
-    echo "Usage: $0 missing parameters"
-    exit -1
-fi
-    alfa1=$1
-    alfa2=$2
-    tvoice=$3
-    tsilence=$4
+alfa1=${1: -3}
+alfa2=${2: -4}
+tvoice=${3: -2}
+tsilence=${4: -2}
 
 # Be sure that this file has execution permissions:
 # Use the nautilus explorer or chmod +x run_vad.sh

@@ -9,10 +9,10 @@ Options:
    -i FILE, --input-wav=FILE   WAVE file for voice activity detection
    -o FILE, --output-vad=FILE  Label file with the result of VAD
    -w FILE, --output-wav=FILE  WAVE file with silences cleared
-   -1 FLOAT, --alfa1=FLOAT  Incremento para el umbral de decision voz/silencio [default: 800] 
-   -2 FILE, --alfa2=FLOAT  Incremento para el umbral de decision voz/silencio [default: 1]
-   -S FILE, --tsilence=FLOAT  Tiempo minimo para silencio [default: 0.12]
-   -V FILE, --tvoice=FLOAT    Tiempo minimo para voz [default: 0.15]
+   -1 FLOAT, --alfa1=FLOAT  Incremento para el umbral de decision voz/silencio [default: 500] 
+   -2 FILE, --alfa2=FLOAT  Incremento para el umbral de decision voz/silencio [default: 4]
+   -S FILE, --tsilence=FLOAT  Tiempo minimo para silencio [default: 2]
+   -V FILE, --tvoice=FLOAT    Tiempo minimo para voz [default: 2]
    -v, --verbose  Show debug information
    -h, --help     Show this screen
    --version      Show the version of the project
