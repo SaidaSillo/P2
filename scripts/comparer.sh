@@ -7,4 +7,3 @@ done | sort -t: -k2n
 #al principio hay sonido 
 #las pausas entre letras(consonantes sordas)
 #maybe voz (otro estado), si estoy mucho rato si es voz, sino no
-#
