@@ -107,14 +107,8 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x) {
       break;
 
     case ST_SILENCE:
-<<<<<<< HEAD
-      if (f.p > vad_data->umbral2){     /*Si estamos en el estado SILENCE y la potencia supera el umbral2, entonces el estado futuro es MAYBE VOICE*/
-        vad_data->state = ST_MV; 
-             
-=======
       if (f.p > vad_data->k2){     /*Si estamos en el estado SILENCE y la potencia supera el umbral2, entonces el estado futuro es MAYBE VOICE*/
         vad_data->state = ST_MV;      
->>>>>>> 6faebd1f94ffe258281b79f7544e3fa6ed989817
         vad_data->mv++;
       }
       break;
