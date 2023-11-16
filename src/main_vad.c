@@ -24,7 +24,7 @@ int main(int argc, char *argv[])
   int frame_size;         /* in samples */
   float frame_duration;   /* in seconds */
   unsigned int t, last_t; /* in frames */
-  float umbral1, umbral2, tvoice, tsilence;
+  float alfa1, alfa2, tvoice, tsilence;
 
   char *input_wav, *output_vad, *output_wav;
 
@@ -34,11 +34,10 @@ int main(int argc, char *argv[])
   input_wav = args.input_wav;
   output_vad = args.output_vad;
   output_wav = args.output_wav;
-  umbral1 = atof(args.umbral1);
-  umbral2 = atof(args.umbral2);
+  alfa1 = atof(args.alfa1);
+  alfa2 = atof(args.alfa2);
   tvoice = atof(args.tvoice);
   tsilence = atof(args.tsilence);
-
   if (input_wav == 0 || output_vad == 0)
   {
     fprintf(stderr, "%s\n", args.usage_pattern);
@@ -75,7 +74,7 @@ int main(int argc, char *argv[])
     }
   }
 
-  vad_data = vad_open(sf_info.samplerate, umbral1, umbral2, tvoice, tsilence);
+  vad_data = vad_open(sf_info.samplerate, alfa1, alfa2, tvoice, tsilence);
   /* Allocate memory for buffers */
   frame_size = vad_frame_size(vad_data);
   buffer = (float *)malloc(frame_size * sizeof(float));
@@ -95,22 +94,24 @@ int main(int argc, char *argv[])
     if (sndfile_out != 0)
     {
       /* TODO: copy all the samples into sndfile_out */
+      sf_write_float(sndfile_out, buffer, frame_size);
     }
 
     state = vad(vad_data, buffer);
 
-    if(last_state==ST_MV && state==ST_SILENCE){
-      last_state=ST_SILENCE;
-    }
-    else if (last_state==ST_MV && state==ST_VOICE){
-      last_state=ST_VOICE;
-    }
-    else if (last_state==ST_MS && state==ST_VOICE){
-      last_state=ST_VOICE;
-    }
-    else if (last_state==ST_MS && state==ST_SILENCE){
-      last_state=ST_SILENCE;
-    }
+    /*Aixo ho he posat jo*/
+    // if(last_state==ST_MV && state==ST_SILENCE){
+    //   last_state=ST_SILENCE;
+    // }
+    // else if (last_state==ST_MV && state==ST_VOICE){
+    //   last_state=ST_VOICE;
+    // }
+    // else if (last_state==ST_MS && state==ST_VOICE){
+    //   last_state=ST_VOICE;
+    // }
+    // else if (last_state==ST_MS && state==ST_SILENCE){
+    //   last_state=ST_SILENCE;
+    // }
     
     if (verbose & DEBUG_VAD)
       vad_show_state(vad_data, stdout);
@@ -118,7 +119,11 @@ int main(int argc, char *argv[])
     /* TODO: print only SILENCE and VOICE labels */
     /* As it is, it prints UNDEF segments but is should be merge to the proper value */
     
+<<<<<<< HEAD
     if (state != last_state && state!= ST_UNDEF)
+=======
+    if (state != last_state && state != ST_UNDEF)
+>>>>>>> 6faebd1f94ffe258281b79f7544e3fa6ed989817
     {
       if (t != last_t){
         fprintf(vadfile, "%.5f\t%.5f\t%s\n", last_t * frame_duration, t * frame_duration, state2str(last_state));
@@ -130,14 +135,27 @@ int main(int argc, char *argv[])
     if (sndfile_out != 0)
     {
       /* TODO: go back and write zeros in silence segments */
+      sf_seek(sndfile_out, -frame_size, SEEK_CUR);
+      sf_write_float(sndfile_out, buffer_zeros, frame_size);
     }
   }
 
   state = vad_close(vad_data);
   /* TODO: what do you want to print, for last frames? */
+<<<<<<< HEAD
   if (t != last_t)
     fprintf(vadfile, "%.5f\t%.5f\t%s\n", last_t * frame_duration, t * frame_duration + n_read / (float)sf_info.samplerate, state2str(state));
+=======
+  if(state!=ST_VOICE && state!=ST_SILENCE){
+    state=ST_SILENCE;
+  }
+>>>>>>> 6faebd1f94ffe258281b79f7544e3fa6ed989817
 
+
+  if (t != last_t){
+    fprintf(vadfile, "%.5f\t%.5f\t%s\n", last_t * frame_duration, t * frame_duration + n_read / (float) sf_info.samplerate, state2str(state));
+  
+  }
   /* clean up: free memory, close open files */
   free(buffer);
   free(buffer_zeros);
