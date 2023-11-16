@@ -6,7 +6,7 @@
 #fi
 
 
-if [ $# != 6]; then
+if [ $# != 4]; then
     echo "Usage: $0 missing parameters"
     exit -1
 fi
@@ -14,8 +14,6 @@ fi
     alfa2=$2
     tvoice=$3
     tsilence=$4
-    zcr_s=$4
-    zcr_v=$6
 
 # Be sure that this file has execution permissions:
 # Use the nautilus explorer or chmod +x run_vad.sh
@@ -28,6 +26,7 @@ set -o pipefail
 DIR_P2=$HOME/PAV/P2
 DB=$DIR_P2/db.v4
 CMD="$DIR_P2/bin/vad --alfa1=$alfa1 --alfa2=$alfa2 --tvoice=$tvoice --tsilence=$tsilence" 
+
 
 for filewav in $DB/*/*wav; do
 #    echo
