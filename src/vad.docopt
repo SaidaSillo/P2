@@ -6,13 +6,14 @@ Usage:
    vad --version
 
 Options:
-   -i FILE, --input-wav=FILE   WAVE file for voice activity detection
+   -i FILE, --input-wav=FILE  WAVE file for voice activity detection
    -o FILE, --output-vad=FILE  Label file with the result of VAD
    -w FILE, --output-wav=FILE  WAVE file with silences cleared
-   -1 FLOAT, --alfa1=FLOAT  Incremento para el umbral de decision voz/silencio [default: 7] 
-   -2 FLOAT, --alfa2=FLOAT  Incremento para el umbral de decision voz/silencio [default: 0.8]
-   -S FLOAT, --tsilence=FLOAT  Tiempo minimo para silencio [default: 0.1]
-   -V FLOAT, --tvoice=FLOAT    Tiempo minimo para voz [default: 0.25]
+   -N INT, --number-init=INT  Number of init frames [default: 15]
+   -f FLOAT, --alpha1=FLOAT  Parameter alpha1 [default: 3]
+   -s FLOAT, --alpha2=FLOAT  Parameter alpha2 [default: 10]
+   -a INT, --frames_mv=INT  Frames of Maybe Voice [default: 10]
+   -b INT, --frames_ms=INT  Frames of Maybe Silence [default: 10]
    -v, --verbose  Show debug information
    -h, --help     Show this screen
    --version      Show the version of the project
