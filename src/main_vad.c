@@ -16,7 +16,6 @@ int main(int argc, char *argv[])
   SF_INFO sf_info;
   FILE *vadfile;
   int n_read = 0, i;
-  int n_write = 0;
 
   VAD_DATA *vad_data;
   VAD_STATE state, last_state;

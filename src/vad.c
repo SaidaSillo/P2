@@ -6,7 +6,6 @@
 #include "pav_analysis.h"
 
 const float FRAME_TIME = 10.0F; /* in ms. */
-const int N_TRAMAS = 9;         // Trames que agafem
 
 /* 
  * As the output state is only ST_VOICE, ST_SILENCE, or ST_UNDEF,
@@ -30,20 +29,20 @@ typedef struct
   float am;
 } Features;
 
-/*
+/* 
  * TODO: Delete and use your own features!
  */
 
 Features compute_features(const float *x, int N)
 {
   /*
-   * Input: x[i] : i=0 .... N-1
+   * Input: x[i] : i=0 .... N-1 
    * Ouput: computed features
    */
-  /*
+  /* 
    * DELETE and include a call to your own functions
    *
-   * For the moment, compute random value between 0 and 1
+   * For the moment, compute random value between 0 and 1 
    */
   Features feat;
 
@@ -91,15 +90,15 @@ unsigned int vad_frame_size(VAD_DATA *vad_data)
   return vad_data->frame_length;
 }
 
-/*
- * TODO: Implement the Voice Activity Detection
+/* 
+ * TODO: Implement the Voice Activity Detection 
  * using a Finite State Automata
  */
 
 VAD_STATE vad(VAD_DATA *vad_data, float *x)
 {
 
-  /*
+  /* 
    * TODO: You can change this, using your own features,
    * program finite state automaton, define conditions, etc.
    */
