@@ -2,6 +2,9 @@
 #define _VAD_H
 #include <stdio.h>
 
+#define MIN_SILENCE 108    //temps minim perque sigui silenci
+#define MIN_VOICE 58    //temps minim perque sigui veu
+
 /* TODO: add the needed states */
 typedef enum {ST_UNDEF=0, ST_SILENCE, ST_VOICE, ST_INIT, ST_MV, ST_MS} VAD_STATE;
 
@@ -16,15 +19,19 @@ typedef struct {
   float sampling_rate;
   unsigned int frame_length;
   float last_feature; /* for debuggin purposes */
-  float alfa1, alfa2, tvoice, tsilence;
-  float mv, ms, k0, k1, k2;
+  float alfa1, alfa2;
+  float k0, k1, k2;
+  int n;
+  float p;
+  float timer;
+  int cont;
 } VAD_DATA;
 
 /* Call this function before using VAD: 
    It should return allocated and initialized values of vad_data
 
    sampling_rate: ... the sampling rate */
-VAD_DATA *vad_open(float sampling_rate, float alfa1, float alfa2, float tvoice, float tsilence);
+VAD_DATA *vad_open(float sampling_rate, float alfa1, float alfa2);
 
 /* vad works frame by frame.
    This function returns the frame size so that the program knows how

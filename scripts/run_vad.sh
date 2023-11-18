@@ -1,9 +1,7 @@
 #!/bin/bash
 
-alfa1=${1: -3}
-alfa2=${2: -4}
-tvoice=${3: -2}
-tsilence=${4: -2}
+alfa1=${1: -1}
+alfa2=${2: -9.5}
 
 # Be sure that this file has execution permissions:
 # Use the nautilus explorer or chmod +x run_vad.sh
@@ -15,14 +13,13 @@ set -o pipefail
 # Write here the name and path of your program and database
 DIR_P2=$HOME/PAV/P2
 DB=$DIR_P2/db.v4
-CMD="$DIR_P2/bin/vad --alfa1=$alfa1 --alfa2=$alfa2 --tvoice=$tvoice --tsilence=$tsilence" 
-
+CMD="$DIR_P2/bin/vad --alfa1=$alfa1 --alfa2=$alfa2"
 
 for filewav in $DB/*/*wav; do
 #    echo
     echo "**************** $filewav ****************"
     if [[ ! -f $filewav ]]; then 
-	    echo "Wav file not found: $filewav" >&2
+	    echo "Wav file not found: $filewav" >&2 #si el fitxer no existeix
 	    exit 1
     fi
 
@@ -37,5 +34,4 @@ for filewav in $DB/*/*wav; do
 done
 
 scripts/vad_evaluation.pl $DB/*/*lab
-
 exit 0
