@@ -1,12 +1,12 @@
 #include <math.h>
 #include <stdlib.h>
 #include <stdio.h>
+
 #include "vad.h"
 #include "pav_analysis.h"
 
 const float FRAME_TIME = 10.0F; /* in ms. */
 
-//float p1= -30;
 /* 
  * As the output state is only ST_VOICE, ST_SILENCE, or ST_UNDEF,
  * only this labels are needed. You need to add all labels, in case
@@ -14,15 +14,16 @@ const float FRAME_TIME = 10.0F; /* in ms. */
  */
 
 const char *state_str[] = {
-  "UNDEF", "S", "V", "INIT", "MV", "MS"
-};
+    "UNDEF", "S", "V", "INIT", "MV", "MS"};
 
-const char *state2str(VAD_STATE st) {
+const char *state2str(VAD_STATE st)
+{
   return state_str[st];
 }
 
 /* Define a datatype with interesting features */
-typedef struct {
+typedef struct
+{
   float zcr;
   float p;
   float am;
@@ -32,7 +33,8 @@ typedef struct {
  * TODO: Delete and use your own features!
  */
 
-Features compute_features(const float *x, int N) {
+Features compute_features(const float *x, int N)
+{
   /*
    * Input: x[i] : i=0 .... N-1 
    * Ouput: computed features
@@ -43,43 +45,48 @@ Features compute_features(const float *x, int N) {
    * For the moment, compute random value between 0 and 1 
    */
   Features feat;
-  feat.p = compute_power(x,N);
-  feat.zcr = compute_zcr (x, N, 16000);
-  feat.am = compute_am(x,N);
+
+  feat.zcr = compute_zcr(x, N, 16000);
+  feat.p = compute_power(x, N);
+  feat.am = compute_am(x, N);
+
   return feat;
 }
-
 
 /* 
  * TODO: Init the values of vad_data
  */
 
-VAD_DATA * vad_open(float rate, float alfa1, float alfa2, float tvoice, float tsilence) {
+VAD_DATA *vad_open(float rate, int number_init, float alpha1, float alpha2, int frames_mv, int frames_ms)
+{
   VAD_DATA *vad_data = malloc(sizeof(VAD_DATA));
   vad_data->state = ST_INIT;
   vad_data->sampling_rate = rate;
   vad_data->frame_length = rate * FRAME_TIME * 1e-3;
-  vad_data->alfa1 = alfa1;
-  vad_data->alfa2 = alfa2;
-  vad_data->tvoice=tvoice;
-  vad_data->tsilence=tsilence;
-  vad_data->ms=0;
-  vad_data->mv=0;
+  vad_data->alpha1 = alpha1;
+  vad_data->alpha2 = alpha2;
+  vad_data->counter_N = number_init;
+  vad_data->counter_init = 0;
+  vad_data->k0 = 0;
+  vad_data->k1 = 0;
+  vad_data->k2 = 0;
+  vad_data->frames_mv = frames_mv; // #frames waiting to go to voice
+  vad_data->frames_ms = frames_ms; // #max frames to return to voice
+  vad_data->fr_und = 0;
+  vad_data->min_back_voice_counter = 0;
+
   return vad_data;
 }
 
-VAD_STATE vad_close(VAD_DATA *vad_data) {
-  /* 
-   * TODO: decide what to do with the last undecided frames
-   */
-  VAD_STATE state = vad_data->state;
-  if(state == ST_MS) state = ST_VOICE;
-  if(state == ST_MV) state = ST_SILENCE;
+VAD_STATE vad_close(VAD_DATA *vad_data, VAD_STATE state)
+{
+  VAD_STATE state_result = vad_data->state;
   free(vad_data);
-  return state;
+  return state_result;
 }
 
-unsigned int vad_frame_size(VAD_DATA *vad_data) {
+unsigned int vad_frame_size(VAD_DATA *vad_data)
+{
   return vad_data->frame_length;
 }
 
@@ -88,7 +95,8 @@ unsigned int vad_frame_size(VAD_DATA *vad_data) {
  * using a Finite State Automata
  */
 
-VAD_STATE vad(VAD_DATA *vad_data, float *x) {
+VAD_STATE vad(VAD_DATA *vad_data, float *x)
+{
 
   /* 
    * TODO: You can change this, using your own features,
@@ -96,81 +104,83 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x) {
    */
 
   Features f = compute_features(x, vad_data->frame_length);
-  vad_data->last_feature=f.p;
-  
-  switch (vad_data->state) {
-    case ST_INIT:
-      vad_data->k0 = f.p;
-      vad_data->k1 = vad_data->k0 + vad_data->alfa1;
-      vad_data->k2 = vad_data->k1 + vad_data->alfa2;
+  vad_data->last_feature = f.p; /* save feature, in case you want to show */
+
+  switch (vad_data->state)
+  {
+  case ST_INIT:
+    if (vad_data->counter_init < vad_data->counter_N)
+    {
+      vad_data->counter_init++;
+      vad_data->k0 += pow(10, f.p / 10);
+    }
+    else
+    {
+      vad_data->k0 = 10 * log10(vad_data->k0 / vad_data->counter_N);
+      vad_data->k1 = vad_data->k0 + vad_data->alpha1;
+      vad_data->k2 = vad_data->k1 + vad_data->alpha2;
       vad_data->state = ST_SILENCE;
-      printf("%f\n", vad_data->k1);
-      printf("%f\n", vad_data->k2);
-      printf("%f\n", vad_data->k0);
-      break;
-
-    case ST_SILENCE:
-      if (f.p > vad_data->k2){     /*Si estamos en el estado SILENCE y la potencia supera el umbral2, entonces el estado futuro es MAYBE VOICE*/
-        vad_data->state = ST_MV;      
-        vad_data->mv++;
-      }
-      break;
-
-   case ST_VOICE:
-      if (f.p < vad_data->k1){     /*Si estamos en el estado VOICE y la potencia NO supera el umbral 1, entonces el estado futuro es MAYBE SILENCE*/
-        vad_data->state = ST_MS;
-        vad_data->ms++;
-      }
-      break;
-
-
-    case ST_MV:
-      if(f.p>vad_data->k1){      /*Si estamos en el estado MAYBE VOICE y la potencia supera el umbral 1*/
-        if(vad_data->mv*vad_data->frame_length/vad_data->sampling_rate > vad_data->tvoice){ /*duracion de la trama = frame_length/samplig_rate*/
-          vad_data->state = ST_VOICE; /*Si el tiempo en MAYBE VOICE supera el tiempo minimo para considerar que hay voz  */
-          vad_data->mv=0;             /*El estado futuro sera VOICE y reinciamos el tiempo en MAYBE VOICE*/
-        } 
-        else{
-          vad_data->mv++;           /*Si no lo supera, se queda en MAYBE VOICE*/
-        }
-      }
-      else if(f.p < vad_data->k2){   /*Si estamos en el estado MAYBE VOICE y la potencia no supera el umbral 2*/
-        vad_data->state=ST_SILENCE;     /*El futuro estado sera silencio*/
-        vad_data->ms=0;                 /*Reiniciamos el tiempo en MAYBE SILENCE a cero*/
-      }
-      break;
-
-    case ST_MS:
-      if(f.p < vad_data->k2){
-        if(vad_data->ms*vad_data->frame_length/vad_data->sampling_rate > vad_data->tsilence){ /*duracion de la trama = frame_length/samplig_rate*/
-          vad_data->state = ST_SILENCE; /*Si el tiempo en MAYBE SILENCE supera el tiempo minimo para considerar que hay silencio  */
-          vad_data->ms=0;             /*El estado futuro sera SILENCE y reinciamos el tiempo en MAYBE SILENCE*/
-        }
-        else{
-          vad_data->ms++;     /*Si no lo supera, se queda en MAYBE SILENCE*/
-        }
-      }
-      else if (f.p > vad_data->k1){   /*Si estamos en el estado MAYBE SILENCE y la potencia supera el umbral 1*/
-        vad_data->state=ST_VOICE;         /*El futuro estado sera VOICE*/
-        vad_data->mv=0;                   /*Reiniciamos el tiempo en MAYBE VOICE a cero*/
-      }
+    }
     break;
 
-    case ST_UNDEF:
+  case ST_SILENCE:
+    if (f.p > vad_data->k1)
+      vad_data->state = ST_MV;
+    break;
+
+  case ST_VOICE:
+    if (f.p < vad_data->k2)
+      vad_data->state = ST_MS;
+    break;
+
+  case ST_MS:
+    if (vad_data->fr_und == vad_data->frames_ms)
+    {
+      vad_data->state = ST_SILENCE;
+      vad_data->fr_und = 0;
+    }
+    else if (f.p > vad_data->k2 && vad_data->fr_und < vad_data->frames_ms)
+    {
+      vad_data->state = ST_VOICE;
+      vad_data->fr_und = 0;
+    }
+    else
+    {
+      vad_data->fr_und++;
+    }
+    break;
+
+  case ST_MV:
+    if (vad_data->fr_und == vad_data->frames_mv)
+    {
+      vad_data->fr_und = 0;
+      vad_data->state = ST_SILENCE;
+    }
+    else if (f.p > vad_data->k2 && vad_data->fr_und < vad_data->frames_mv)
+    {
+      vad_data->fr_und = 0;
+      vad_data->state = ST_VOICE;
+    }
+    else
+    {
+      vad_data->fr_und++;
+    }
+    break;
+
+  case ST_UNDEF:
     break;
   }
-  
-  if (vad_data->state == ST_SILENCE || vad_data->state == ST_VOICE){
-    //printf("%s\n", state2str(vad_data->state));
+
+  if (vad_data->state == ST_SILENCE ||
+      vad_data->state == ST_VOICE)
     return vad_data->state;
-  }
-  else{
-    /*printf(" %d\n", vad_data->state);*/
+  else if (vad_data->state == ST_INIT)
+    return ST_SILENCE;
+  else
     return ST_UNDEF;
-  }
 }
 
-
-void vad_show_state(const VAD_DATA *vad_data, FILE *out) {
+void vad_show_state(const VAD_DATA *vad_data, FILE *out)
+{
   fprintf(out, "%d\t%f\n", vad_data->state, vad_data->last_feature);
 }
