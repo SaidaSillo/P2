@@ -149,6 +149,13 @@ Ejercicios
 
 
 ### Desarrollo del detector de actividad vocal
+Para el resto de la práctica el fichero de audio que usaremos es prueba.wav.
+Despues de probar varios valores para los parámetros, hemos llegado a la conclusión de que obteníamos resultados más precisos con los siguientes:
+   number-init = 10  Number of init frames
+   alpha1 = 2.9  Parameter alpha1 
+   alpha2 = 7  Parameter alpha2 
+   frames_mv = 11  Frames of Maybe Voice
+   frames_ms = 16  Frames of Maybe Silence 
 
 - Complete el código de los ficheros de la práctica para implementar un detector de actividad vocal en
   tiempo real tan exacto como sea posible. Tome como objetivo la maximización de la puntuación-F `TOTAL`.
