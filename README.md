@@ -1,6 +1,6 @@
 PAV - P2: detección de actividad vocal (VAD)
 ============================================
-Omar Davila y Saida Sillo
+
 ------
 Esta práctica se distribuye a través del repositorio GitHub [Práctica 2](https://github.com/albino-pav/P2),
 y una parte de su gestión se realizará mediante esta web de trabajo colaborativo.  Al contrario que Git,
@@ -165,8 +165,7 @@ Para el resto de la práctica el fichero de audio que usaremos es prueba.wav.
 
 - Inserte una gráfica en la que se vea con claridad la señal temporal, el etiquetado manual y la detección
   automática conseguida para el fichero grabado al efecto.
-  ![image](https://github.com/SaidaSillo/P2/assets/99822243/c0ef9d9d-a58f-44e4-897d-8e01880de11f)
-
+ 
 
 - Explique, si existen. las discrepancias entre el etiquetado manual y la detección automática.
   >Podemos observar que hay dos fallos, uno más notable que el otro.
@@ -178,8 +177,7 @@ Para el resto de la práctica el fichero de audio que usaremos es prueba.wav.
   continuación las tasas de sensibilidad (*recall*) y precisión para el conjunto de la base de datos (sólo
   el resumen).
   
-  ![image](https://github.com/SaidaSillo/P2/assets/99822243/65dd5d47-65ab-47ab-910a-eb1097bab632)
-
+  
 ### Trabajos de ampliación
 
 #### Cancelación del ruido en los segmentos de silencio
@@ -192,7 +190,7 @@ Para el resto de la práctica el fichero de audio que usaremos es prueba.wav.
 
 - Si ha usado `docopt_c` para realizar la gestión de las opciones y argumentos del programa `vad`, inserte
   una captura de pantalla en la que se vea el mensaje de ayuda del programa.
-  ![image](https://github.com/SaidaSillo/P2/assets/99822243/f4864968-5312-4773-839b-cf58f1f9559b)
+ 
 
 
 ### Contribuciones adicionales y/o comentarios acerca de la práctica
