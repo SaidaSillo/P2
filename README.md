@@ -142,10 +142,14 @@ Ejercicios
 
 	* Incremento del nivel potencia en dB, respecto al nivel correspondiente al silencio inicial, para
 	  estar seguros de que un segmento de señal se corresponde con voz.
+   	>Tal y como podemos observar en el contorno de potencia, vemos que el nivel de silencio en media es aproximadamente de 30dB y el nivel de voz de unos 50dB. Así pues, tenemos un incremento de 20dB.
 
 	* Duración mínima razonable de los segmentos de voz y silencio.
+	>Duración mínima de segmento de voz: 0.1s
+	Duración mínima de segmento de silencio: 0.03s
 
 	* ¿Es capaz de sacar alguna conclusión a partir de la evolución de la tasa de cruces por cero?
+	>La tasa de curces por cero nos indica la existencia de consonantes sordas (con una tasa muy elevada), detección de un tramo de voz (tasa muy baja) y de silencio (una tasa de cruces por cero media).
 
 
 ### Desarrollo del detector de actividad vocal
