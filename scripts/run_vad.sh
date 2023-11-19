@@ -12,7 +12,7 @@ for filewav in $DB/*/*wav; do
 #    echo
     echo "**************** $filewav ****************"
     if [[ ! -f $filewav ]]; then 
-	    echo "Wav file not found: $filewav" >&2
+	    echo "Wav file not found: $filewav" >&2 #si el fitxer no existeix
 	    exit 1
     fi
 
@@ -27,5 +27,4 @@ for filewav in $DB/*/*wav; do
 done
 
 scripts/vad_evaluation.pl $DB/*/*lab
-
 exit 0
