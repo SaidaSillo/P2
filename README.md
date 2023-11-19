@@ -170,7 +170,11 @@ Despues de probar varios valores para los parámetros, hemos llegado a la conclu
 
 
 - Explique, si existen. las discrepancias entre el etiquetado manual y la detección automática.
-
+```
+  Podemos observar que hay dos fallos, uno más notable que el otro.
+  El primer error, y el más grave es que al inicio de la señal, cuando el locutor todavía no ha empezado a hablar, se detecta VOZ cuando realmente hay SILENCIO.
+  Posteriormente hay otro error, en el cual se detecta SILENCIO más tarde de lo que debería y también se acaba el SILENCIO antes de lo que deberia.
+```
 
 - Evalúe los resultados sobre la base de datos `db.v4` con el script `vad_evaluation.pl` e inserte a 
   continuación las tasas de sensibilidad (*recall*) y precisión para el conjunto de la base de datos (sólo
