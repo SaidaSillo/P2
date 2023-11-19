@@ -1,6 +1,7 @@
 PAV - P2: detección de actividad vocal (VAD)
 ============================================
-
+Omar Davila y Saida Sillo
+------
 Esta práctica se distribuye a través del repositorio GitHub [Práctica 2](https://github.com/albino-pav/P2),
 y una parte de su gestión se realizará mediante esta web de trabajo colaborativo.  Al contrario que Git,
 GitHub se gestiona completamente desde un entorno gráfico bastante intuitivo. Además, está razonablemente
@@ -148,19 +149,36 @@ Ejercicios
 
 
 ### Desarrollo del detector de actividad vocal
+Para el resto de la práctica el fichero de audio que usaremos es prueba.wav.
 
 - Complete el código de los ficheros de la práctica para implementar un detector de actividad vocal en
   tiempo real tan exacto como sea posible. Tome como objetivo la maximización de la puntuación-F `TOTAL`.
+  >Despues de probar varios valores para los parámetros, hemos llegado a la conclusión de que obteníamos resultados más precisos con los siguientes:
+  ```.sh
+   number-init = 10  Number of init frames
+   alpha1 = 2.9  Parameter alpha1 
+   alpha2 = 7  Parameter alpha2 
+   frames_mv = 11  Frames of Maybe Voice
+   frames_ms = 16  Frames of Maybe Silence
+  ```
+
 
 - Inserte una gráfica en la que se vea con claridad la señal temporal, el etiquetado manual y la detección
-  automática conseguida para el fichero grabado al efecto. 
+  automática conseguida para el fichero grabado al efecto.
+  ![image](https://github.com/SaidaSillo/P2/assets/99822243/c0ef9d9d-a58f-44e4-897d-8e01880de11f)
+
 
 - Explique, si existen. las discrepancias entre el etiquetado manual y la detección automática.
+  >Podemos observar que hay dos fallos, uno más notable que el otro.
+  >El primer error, y el más grave es que al inicio de la señal, cuando el locutor todavía no ha empezado a hablar, se detecta VOZ cuando realmente hay SILENCIO.
+  >Posteriormente hay otro error, en el cual se detecta SILENCIO más tarde de lo que debería y también se acaba el SILENCIO antes de lo que deberia.
+
 
 - Evalúe los resultados sobre la base de datos `db.v4` con el script `vad_evaluation.pl` e inserte a 
   continuación las tasas de sensibilidad (*recall*) y precisión para el conjunto de la base de datos (sólo
   el resumen).
-
+  
+  ![image](https://github.com/SaidaSillo/P2/assets/99822243/65dd5d47-65ab-47ab-910a-eb1097bab632)
 
 ### Trabajos de ampliación
 
@@ -174,6 +192,7 @@ Ejercicios
 
 - Si ha usado `docopt_c` para realizar la gestión de las opciones y argumentos del programa `vad`, inserte
   una captura de pantalla en la que se vea el mensaje de ayuda del programa.
+  ![image](https://github.com/SaidaSillo/P2/assets/99822243/f4864968-5312-4773-839b-cf58f1f9559b)
 
 
 ### Contribuciones adicionales y/o comentarios acerca de la práctica
@@ -186,6 +205,10 @@ Ejercicios
 
 
 ### Antes de entregar la práctica
+
+Recuerde comprobar que el repositorio cuenta con los códigos correctos y en condiciones de ser 
+correctamente compilados con la orden `meson bin; ninja -C bin`. El programa generado (`bin/vad`) será
+el usado, sin más opciones, para realizar la evaluación *ciega* del sistema.
 
 Recuerde comprobar que el repositorio cuenta con los códigos correctos y en condiciones de ser 
 correctamente compilados con la orden `meson bin; ninja -C bin`. El programa generado (`bin/vad`) será
