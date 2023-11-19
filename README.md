@@ -150,18 +150,17 @@ Ejercicios
 
 ### Desarrollo del detector de actividad vocal
 Para el resto de la práctica el fichero de audio que usaremos es prueba.wav.
-Despues de probar varios valores para los parámetros, hemos llegado a la conclusión de que obteníamos resultados más precisos con los siguientes:
-```.sh
+
+- Complete el código de los ficheros de la práctica para implementar un detector de actividad vocal en
+  tiempo real tan exacto como sea posible. Tome como objetivo la maximización de la puntuación-F `TOTAL`.
+  >Despues de probar varios valores para los parámetros, hemos llegado a la conclusión de que obteníamos resultados más precisos con los siguientes:
+  ```.sh
    number-init = 10  Number of init frames
    alpha1 = 2.9  Parameter alpha1 
    alpha2 = 7  Parameter alpha2 
    frames_mv = 11  Frames of Maybe Voice
    frames_ms = 16  Frames of Maybe Silence
-```
-
-- Complete el código de los ficheros de la práctica para implementar un detector de actividad vocal en
-  tiempo real tan exacto como sea posible. Tome como objetivo la maximización de la puntuación-F `TOTAL`.
-  ![image](https://github.com/SaidaSillo/P2/assets/99822243/8bddbdb5-0080-49ac-a3a2-e46758b2b009)
+  ```
 
 
 - Inserte una gráfica en la que se vea con claridad la señal temporal, el etiquetado manual y la detección
@@ -170,15 +169,15 @@ Despues de probar varios valores para los parámetros, hemos llegado a la conclu
 
 
 - Explique, si existen. las discrepancias entre el etiquetado manual y la detección automática.
-```
-  Podemos observar que hay dos fallos, uno más notable que el otro.
-  El primer error, y el más grave es que al inicio de la señal, cuando el locutor todavía no ha empezado a hablar, se detecta VOZ cuando realmente hay SILENCIO.
-  Posteriormente hay otro error, en el cual se detecta SILENCIO más tarde de lo que debería y también se acaba el SILENCIO antes de lo que deberia.
-```
+  >Podemos observar que hay dos fallos, uno más notable que el otro.
+  >El primer error, y el más grave es que al inicio de la señal, cuando el locutor todavía no ha empezado a hablar, se detecta VOZ cuando realmente hay SILENCIO.
+  >Posteriormente hay otro error, en el cual se detecta SILENCIO más tarde de lo que debería y también se acaba el SILENCIO antes de lo que deberia.
+
 
 - Evalúe los resultados sobre la base de datos `db.v4` con el script `vad_evaluation.pl` e inserte a 
   continuación las tasas de sensibilidad (*recall*) y precisión para el conjunto de la base de datos (sólo
   el resumen).
+  
   ![image](https://github.com/SaidaSillo/P2/assets/99822243/65dd5d47-65ab-47ab-910a-eb1097bab632)
 
 ### Trabajos de ampliación
@@ -193,6 +192,7 @@ Despues de probar varios valores para los parámetros, hemos llegado a la conclu
 
 - Si ha usado `docopt_c` para realizar la gestión de las opciones y argumentos del programa `vad`, inserte
   una captura de pantalla en la que se vea el mensaje de ayuda del programa.
+  ![image](https://github.com/SaidaSillo/P2/assets/99822243/f4864968-5312-4773-839b-cf58f1f9559b)
 
 
 ### Contribuciones adicionales y/o comentarios acerca de la práctica
